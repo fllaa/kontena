@@ -1,27 +1,22 @@
 import { useEffect, useState } from "react";
 import Head from "next/head";
-import {
-  BsLayoutWtf,
-  BsList,
-  BsGrid,
-  BsFolder2,
-  BsFileEarmark,
-} from "react-icons/bs";
+import Link from "next/link";
+import { BsLayoutWtf, BsList, BsGrid, BsHouse } from "react-icons/bs";
 import { useRouter } from "next/router";
 import absoluteUrl from "next-absolute-url";
 import { themeChange } from "theme-change";
 import Navbar from "../components/Navbar";
 import ListFile from "../components/ListFile";
+import Breadcrumb from "../components/Breadcrumb";
 
 export default function Home({ data }) {
   const router = useRouter();
-  const { path } = router.query;
+  const path = router.query.path || [];
   const [files, setFiles] = useState(data);
   const [layout, setLayout] = useState("list");
   useEffect(() => {
     themeChange(false);
   }, []);
-  console.log(path);
   return (
     <div>
       <Head>
@@ -31,14 +26,17 @@ export default function Home({ data }) {
       <div className="flex justify-between items-center mx-8 mt-4 lg:mx-24 lg:mt-12 bg-primary text-primary-content rounded-tl rounded-tr shadow-2xl px-4 py-2">
         <div className="text-sm breadcrumbs">
           <ul>
-            {path.map((item, index) => (
-              <li key={index}>
+            <li>
+              <Link href="/">
                 <a>
-                  <BsFolder2 className="mr-1" />
-                  {item}
+                  <BsHouse />
                 </a>
-              </li>
-            ))}
+              </Link>
+            </li>
+            {path.length > 0 &&
+              path.map((item, index) => (
+                <Breadcrumb key={index} path={path} index={index} item={item} />
+              ))}
           </ul>
         </div>
         <div className="dropdown dropdown-end">
