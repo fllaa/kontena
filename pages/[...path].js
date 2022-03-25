@@ -8,6 +8,7 @@ import {
   BsFileEarmark,
 } from "react-icons/bs";
 import { useRouter } from "next/router";
+import absoluteUrl from "next-absolute-url";
 import { themeChange } from "theme-change";
 import Navbar from "../components/Navbar";
 import ListFile from "../components/ListFile";
@@ -87,8 +88,9 @@ export default function Home({ data }) {
   );
 }
 
-export async function getServerSideProps() {
-  const res = await fetch("http://localhost:3000/api/v1/gdrive");
+export async function getServerSideProps({ req }) {
+  const { origin } = absoluteUrl(req);
+  const res = await fetch(origin + "/api/v1/gdrive");
   const data = await res.json();
   return {
     props: { data },
