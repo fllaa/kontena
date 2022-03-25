@@ -1,6 +1,22 @@
+import { useEffect, useState } from "react";
 import ThemeMenu from "./ThemeMenu";
 
-export default function Navbar() {
+export default function Navbar({ data, setFiles }) {
+  const [input, setInput] = useState("");
+  // handle input change
+  const handleChange = (e) => {
+    setInput(e.target.value);
+  };
+  useEffect(() => {
+    if (input === "") {
+      setFiles(data);
+    } else {
+      const filtered = data.filter((file) =>
+        file.name.toLowerCase().includes(input.toLowerCase())
+      );
+      setFiles(filtered);
+    }
+  }, [input]);
   return (
     <div className="navbar bg-base-100 shadow-lg lg:px-8">
       <div className="navbar-start">
@@ -17,6 +33,8 @@ export default function Navbar() {
               type="text"
               placeholder="Search…"
               className="input input-bordered input-primary"
+              value={input}
+              onChange={handleChange}
             />
             <button className="btn btn-square btn-primary">
               <svg

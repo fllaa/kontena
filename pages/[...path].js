@@ -27,7 +27,7 @@ export default function Home({ data }) {
       <Head>
         <title>Kontena</title>
       </Head>
-      <Navbar />
+      <Navbar data={data} setFiles={setFiles} />
       <div className="flex justify-between items-center mx-8 mt-4 lg:mx-24 lg:mt-12 bg-primary text-primary-content rounded-tl rounded-tr shadow-2xl px-4 py-2">
         <div className="text-sm breadcrumbs">
           <ul>
