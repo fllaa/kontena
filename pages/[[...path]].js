@@ -17,6 +17,9 @@ export default function Home({ data }) {
   useEffect(() => {
     themeChange(false);
   }, []);
+  useEffect(() => {
+    setFiles(data);
+  }, [data]);
   return (
     <div>
       <Head>
@@ -33,10 +36,7 @@ export default function Home({ data }) {
                 </a>
               </Link>
             </li>
-            {path.length > 0 &&
-              path.map((item, index) => (
-                <Breadcrumb key={index} path={path} index={index} item={item} />
-              ))}
+            {path.length > 0 && <Breadcrumb name={path[0]} />}
           </ul>
         </div>
         <div className="dropdown dropdown-end">
@@ -86,11 +86,20 @@ export default function Home({ data }) {
   );
 }
 
-export async function getServerSideProps({ req }) {
+export async function getServerSideProps({ req, query }) {
   const { origin } = absoluteUrl(req);
-  const res = await fetch(origin + "/api/v1/gdrive");
-  const data = await res.json();
-  return {
-    props: { data },
-  };
+  const { path } = query;
+  if (path) {
+    const res = await fetch(origin + "/api/v1/drive/list/" + path[1]);
+    const data = await res.json();
+    return {
+      props: { data },
+    };
+  } else {
+    const res = await fetch(origin + "/api/v1/drive/list/");
+    const data = await res.json();
+    return {
+      props: { data },
+    };
+  }
 }

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import ThemeMenu from "./ThemeMenu";
 
 export default function Navbar({ data, setFiles }) {
@@ -23,7 +24,9 @@ export default function Navbar({ data, setFiles }) {
         <a className="normal-case text-xl text-primary font-bold">コンテナ</a>
       </div>
       <div className="navbar-center">
-        <a className="btn btn-ghost normal-case text-xl">Kontena</a>
+        <Link href="/">
+          <a className="btn btn-ghost normal-case text-xl">Kontena</a>
+        </Link>
       </div>
       <div className="navbar-end">
         <ThemeMenu />

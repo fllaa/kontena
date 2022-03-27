@@ -1,6 +1,7 @@
 import { google } from "googleapis";
 
 export default function handler(req, res) {
+  const { path } = req.query;
   const { CLIENT_ID, CLIENT_SECRET, REDIRECT_URL, REFRESH_TOKEN, ROOT_ID } =
     process.env;
   const oauth2Client = new google.auth.OAuth2(
@@ -16,7 +17,7 @@ export default function handler(req, res) {
     {
       includeItemsFromAllDrives: true,
       supportsAllDrives: true,
-      q: `'${ROOT_ID}' in parents and trashed = false`,
+      q: `'${path ? path[0] : ROOT_ID}' in parents and trashed = false`,
       orderBy: "folder, name",
       pageSize: 1000,
       fields:
@@ -30,7 +31,11 @@ export default function handler(req, res) {
       if (files.length) {
         res
           .status(200)
-          .json(files.filter((file) => file.parents[0] === ROOT_ID));
+          .json(
+            files.filter((file) =>
+              file.parents[0] === path ? path[0] : ROOT_ID
+            )
+          );
       } else {
         res.status(404).json({ message: "No files found" });
       }
