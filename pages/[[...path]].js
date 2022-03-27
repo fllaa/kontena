@@ -17,6 +17,9 @@ export default function Home({ data }) {
   useEffect(() => {
     themeChange(false);
   }, []);
+  useEffect(() => {
+    setFiles(data);
+  }, [data]);
   return (
     <div>
       <Head>
@@ -86,10 +89,45 @@ export default function Home({ data }) {
   );
 }
 
-export async function getServerSideProps({ req }) {
+export async function getServerSideProps({ req, query }) {
   const { origin } = absoluteUrl(req);
-  const res = await fetch(origin + "/api/v1/gdrive");
-  const data = await res.json();
+  let promises = [];
+  let data;
+  let id = "";
+  let parentId = "";
+  let urlList = `${origin}/api/v1/drive/list/`;
+  const { path } = query;
+  if (path) {
+    path.forEach((item, index) => {
+      promises.push(
+        new Promise((resolve) => {
+          fetch(`${urlList}dir/${item + "/" + parentId}`).then((res) => {
+            res.json().then((res) => {
+              console.log(index, res[0]);
+              id = res[0].id;
+              parentId = res[0].parents[0];
+              resolve(res[0]);
+            });
+          });
+        })
+      );
+    });
+    const allPromises = await Promise.all(promises);
+    console.log("id", id);
+    console.log("parent", parentId);
+    console.log(allPromises);
+    // await Promise.all(promises).then((res) => {
+    //   fetch(`${urlList}/${res[res.length - 1].id}`).then((res) => {
+    //     res.json().then((res) => {
+    //       console.log("ok");
+    //       return res;
+    //     });
+    //   });
+    // });
+  } else {
+    const res = await fetch(urlList);
+    data = await res.json();
+  }
   return {
     props: { data },
   };
