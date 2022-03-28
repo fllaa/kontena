@@ -1,12 +1,7 @@
 import { google } from "googleapis";
-import stream from "stream";
-import { promisify } from "util";
-
-const pipeline = promisify(stream.pipeline);
-const down = async (req, res) => await pipeline(req, res);
 
 export default async function handler(req, res) {
-  const { id, name, mimeType } = req.query;
+  const { id, name, mimeType, size } = req.query;
   const { CLIENT_ID, CLIENT_SECRET, REDIRECT_URL, REFRESH_TOKEN } = process.env;
   const oauth2Client = new google.auth.OAuth2(
     CLIENT_ID,
@@ -23,13 +18,19 @@ export default async function handler(req, res) {
       supportsAllDrives: true,
       alt: "media",
     },
+    { responseType: "stream" },
     (err, resp) => {
-      if (err) return res.status(400).json({ error: err });
-      // set headers
       res.setHeader("Content-Type", mimeType);
       res.setHeader("Content-Disposition", `attachment; filename="${name}"`);
-      // pipe the response to the response
-      down(resp.data, res);
+      res.setHeader("Content-Length", size);
+      resp.data
+        .on("end", () => {
+          console.log("Done");
+        })
+        .on("error", (err) => {
+          console.log("Error", err);
+        })
+        .pipe(res);
     }
   );
 }

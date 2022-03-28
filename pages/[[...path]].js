@@ -84,6 +84,7 @@ export default function Home({ data }) {
             <a
               href={"/api/v1/drive/get/download/" + jsonToQueryString(file)}
               target="_blank"
+              rel="noreferrer"
               className="btn btn-primary space-x-2"
             >
               <div className="badge badge-secondary">
