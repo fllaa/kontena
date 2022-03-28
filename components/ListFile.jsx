@@ -6,7 +6,16 @@ import { truncate } from "../utils/string";
 export default function ListFile({ file, layout }) {
   const [length, setLength] = useState(30);
   return (
-    <Link href={"/" + file.name + "/" + file.id}>
+    <Link
+      href={
+        "/" +
+        file.name +
+        "/" +
+        file.id +
+        "/" +
+        (file.mimeType === "application/vnd.google-apps.folder" ? "" : "view")
+      }
+    >
       <a
         onMouseEnter={() => setLength(150)}
         onMouseLeave={() => setLength(30)}
